@@ -97,42 +97,84 @@ router.post('/users', (req, res) => {
                         res.json({"message": "user already exist"})
                     }
                 })
+                .catch(err => {
+                    console.log(err)
+                })
         }
     }
 
 });
 
-// router.put('/users', (req, res) => {
-//     let { Name, IndonesianId, Birthday } = req.body;
-//
-//     // periksa kelengkapan data
-//     if ( Name === undefined ) {
-//         res.status(400);
-//         res.json({"message": "no name specified"})
-//     } else if ( IndonesianId === undefined ) {
-//         res.status(400);
-//         res.json({"message": "no id specified"})
-//     } else if ( Birthday === undefined ) {
-//         res.status(400);
-//         res.json({"message": "no birthday specified"})
-//     } else { // validasi nama dan id, birthday asumsi valid
-//         if ( Name.match(namere) === null ) {
-//             res.status(400);
-//             res.json(invalidName)
-//         } else if ( IndonesianId.match(idre) === null ) {
-//             res.status(400);
-//             res.json(invalidId)
-//         } else {
-//             User.query()
-//                 .then(users => {
-//                     if ( users.length === 0 ) {
-//
-//                     }
-//                 })
-//         }
-//     }
-//
-// });
+router.put('/users', (req, res) => {
+    let { Name, IndonesianId, Birthday } = req.body;
+    console.log(req.body);
+
+    // periksa kelengkapan data
+    if ( Name === undefined ) {
+        console.log("no name");
+        res.status(400);
+        res.json({"message": "no name specified"})
+    } else if ( IndonesianId === undefined ) {
+        console.log("no id");
+        res.status(400);
+        res.json({"message": "no id specified"})
+    } else if ( Birthday === undefined ) {
+        console.log("no bday");
+        res.status(400);
+        res.json({"message": "no birthday specified"})
+    } else { // validasi nama dan id, birthday asumsi valid
+        console.log("data lengkap")
+        if ( Name.match(namere) === null ) {
+            console.log("invalid name");
+            res.status(400);
+            res.json(invalidName)
+        } else if ( IndonesianId.match(idre) === null ) {
+            console.log("invalid id");
+            res.status(400);
+            res.json(invalidId)
+        } else {
+            console.log("id and name good");
+            User.query()
+                .where('IndonesianId', IndonesianId)
+                .then(users => {
+                    if ( users.length === 0 ) {
+                        console.log("user with this id doesn't exist");
+                        User.query()
+                            .insert({
+                                Name: Name,
+                                IndonesianId: IndonesianId,
+                                Birthday: Birthday
+                            })
+                            .then(() => {
+                                console.log("user added")
+                                res.json({"message": "user added successfully"})
+                            })
+                            .catch(err => {
+                                console.log(err)
+                            })
+                    } else {
+                        User.query()
+                            .update({
+                                Name: Name,
+                                IndonesianId: IndonesianId,
+                                Birthday: Birthday
+                            })
+                            .where('IndonesianId', IndonesianId)
+                            .then(() => {
+                                res.json({"message": "user updated successfully"})
+                            })
+                            .catch(err => {
+                                console.log(err)
+                            })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    }
+
+});
 
 // router.patch('/users', (req, res) => {
 //     User.query()
