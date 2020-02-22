@@ -6,10 +6,10 @@ const User = require('../../models/User');
 
 // REGEX
 // match name, only match alphabet, apostrophe, and dash
-const namere = /^[a-z'][a-z\s'-.]+[a-z.]$/i;
+const nameRE = /^[a-z'][a-z\s'-.]+[a-z.]$/i;
 
 // referensi https://id.wikipedia.org/wiki/Nomor_Induk_Kependudukan
-const idre = new RegExp([
+const idRE = new RegExp([
     '^([1-9]{2})', // match kode provinsi
     '([1-9][0-9]|0[1-9]){2}', // match kode kota dan kecamatan
     '(([0-246][0-9])|([37][01]))', // match tanggal lahir
@@ -74,15 +74,18 @@ router.post('/users', (req, res) => {
         res.status(400);
         res.json({"message": "no birthday specified"})
     } else { // validasi nama dan id, birthday asumsi valid
-        if ( Name.match(namere) === null ) {
+        if ( Name.match(nameRE) === null ) {
             res.status(400);
             res.json(invalidName)
-        } else if ( IndonesianId.match(idre) === null ) {
+        } else if ( IndonesianId.match(idRE) === null ) {
             res.status(400);
             res.json(invalidId)
         } else {
             User.query()
-                .where("IndonesianId", IndonesianId)
+                .where({ // periksa instance dengan id yang sama dan belum 'dihapus'
+                    IndonesianId: IndonesianId,
+                    deletedAt: '0000-00-00 00:00:00'
+                })
                 .then(users => {
                     if ( users.length === 0 ) {
                         User.query()
@@ -127,7 +130,7 @@ router.put('/users', (req, res) => {
         res.json({"message": "no birthday specified"})
     } else { // validasi nama dan id, birthday asumsi valid
 
-        if ( Name.match(namere) === null ) {
+        if ( Name.match(nameRE) === null ) {
             res.status(400);
             res.json(invalidName)
         } else if ( IndonesianId.match(idre) === null ) {
@@ -135,10 +138,13 @@ router.put('/users', (req, res) => {
             res.json(invalidId)
         } else {
             User.query()
-                .where('IndonesianId', IndonesianId)
+                .where({ // periksa instance dengan id yang sama dan belum 'dihapus'
+                    IndonesianId: IndonesianId,
+                    deletedAt: '0000-00-00 00:00:00'
+                })
                 .then(users => {
                     if ( users.length === 0 ) {
-                        console.log("user with this id doesn't exist");
+
                         User.query()
                             .insert({
                                 Name: Name,
@@ -160,7 +166,10 @@ router.put('/users', (req, res) => {
                                 Birthday: Birthday,
                                 updatedAt: knex.raw("CURRENT_TIMESTAMP")
                             })
-                            .where('IndonesianId', IndonesianId)
+                            .where({
+                                IndonesianId: IndonesianId,
+                                deletedAt: '0000-00-00 00:00:00'
+                            })
                             .then(() => {
                                 res.json({"message": "user updated successfully"})
                             })
@@ -177,21 +186,49 @@ router.put('/users', (req, res) => {
 
 });
 
-// router.patch('/users/:id', (req, res) => {
-//     let { Name, IndonesianId, Birthday } = req.body;
-//
-//     if ( Name !== undefined ) {
-//         if ( Name.match(namere) === null ) {
-//             res.json(invalidName)
-//         }
-//     }
-//
-//     if ( IndonesianId !== undefined ) {
-//         if (IndonesianId.match(idre) === null) {
-//             res.json(invalidId)
-//         }
-//     }
-// });
+router.patch('/users/:id', (req, res) => {
+
+    let oldId = req.params.id;
+    let { Name, IndonesianId, Birthday } = req.body;
+
+    if ( Name !== undefined && Name.match(nameRE) === null ) {
+        res.json(invalidName)
+    } else if ( IndonesianId !== undefined && IndonesianId.match(idRE) === null ) {
+        res.json(invalidId)
+    } else {
+        User.query()
+            .where({
+                IndonesianId: oldId,
+                deletedAt: '0000-00-00 00:00:00'
+            })
+            .then(users => {
+                if ( users.length !== 0 ) {
+                    let user = users[0];
+                    User.query()
+                        .where({
+                            IndonesianId: oldId,
+                            deletedAt: '0000-00-00 00:00:00'
+                        })
+                        .update({
+                            Name: Name || user.Name,
+                            IndonesianId: IndonesianId || oldId,
+                            Birthday: Birthday || user.Birthday,
+                            updatedAt: knex.raw("CURRENT_TIMESTAMP")
+                        })
+                        .then(() => {
+                            res.json({"message": "user updated successfully"})
+                        })
+                } else {
+                    res.json({"message": "user doesn't exist"})
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+    }
+
+});
 
 router.delete('/users/:id', (req, res) => {
     let IndonesianId = req.params.id
