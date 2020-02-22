@@ -76,18 +76,26 @@ router.post('/users', (req, res) => {
             res.json(invalidId)
         } else {
             User.query()
-                .insert({
-                    Name: Name,
-                    IndonesianId: IndonesianId,
-                    Birthday: Birthday
-                })
-                .then(() => {
-                    res.json({
-                        message: "success"
-                    })
-                })
-                .catch(err => {
-                    console.log(err);
+                .where("IndonesianId", IndonesianId)
+                .then(users => {
+                    if ( users.length === 0 ) {
+                        User.query()
+                            .insert({
+                                Name: Name,
+                                IndonesianId: IndonesianId,
+                                Birthday: Birthday
+                            })
+                            .then(() => {
+                                res.json({
+                                    message: "success"
+                                })
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    } else {
+                        res.json({"message": "user already exist"})
+                    }
                 })
         }
     }
