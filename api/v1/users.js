@@ -1,4 +1,5 @@
 const express = require('express');
+const knex = require('knex');
 const router = express.Router();
 const User = require('../../models/User');
 
@@ -19,7 +20,6 @@ const idre = new RegExp([
 
 // messages
 const invalidName = {"message":"Invalid name"};
-const invalidBirthday = {"message": "Invalid Birthday"};
 const invalidId = {"message": "Invalid ID"};
 const notFound = {"message": "no user found"};
 
@@ -111,29 +111,23 @@ router.put('/users', (req, res) => {
 
     // periksa kelengkapan data
     if ( Name === undefined ) {
-        console.log("no name");
         res.status(400);
         res.json({"message": "no name specified"})
     } else if ( IndonesianId === undefined ) {
-        console.log("no id");
         res.status(400);
         res.json({"message": "no id specified"})
     } else if ( Birthday === undefined ) {
-        console.log("no bday");
         res.status(400);
         res.json({"message": "no birthday specified"})
     } else { // validasi nama dan id, birthday asumsi valid
-        console.log("data lengkap")
+
         if ( Name.match(namere) === null ) {
-            console.log("invalid name");
             res.status(400);
             res.json(invalidName)
         } else if ( IndonesianId.match(idre) === null ) {
-            console.log("invalid id");
             res.status(400);
             res.json(invalidId)
         } else {
-            console.log("id and name good");
             User.query()
                 .where('IndonesianId', IndonesianId)
                 .then(users => {
@@ -157,7 +151,8 @@ router.put('/users', (req, res) => {
                             .update({
                                 Name: Name,
                                 IndonesianId: IndonesianId,
-                                Birthday: Birthday
+                                Birthday: Birthday,
+                                updatedAt: knex.raw("CURRENT_TIMESTAMP")
                             })
                             .where('IndonesianId', IndonesianId)
                             .then(() => {
@@ -176,19 +171,49 @@ router.put('/users', (req, res) => {
 
 });
 
-// router.patch('/users', (req, res) => {
-//     User.query()
-//         .then(users => {
-//             res.json(users)
-//         })
-// });
+// router.patch('/users/:id', (req, res) => {
+//     let { Name, IndonesianId, Birthday } = req.body;
 //
-// router.delete('/users', (req, res) => {
-//     User.query()
-//         .then(users => {
-//             res.json(users)
-//         })
+//     if ( Name !== undefined ) {
+//         if ( Name.match(namere) === null ) {
+//             res.json(invalidName)
+//         }
+//     }
+//
+//     if ( IndonesianId !== undefined ) {
+//         if (IndonesianId.match(idre) === null) {
+//             res.json(invalidId)
+//         }
+//     }
 // });
+
+router.delete('/users/:id', (req, res) => {
+    let IndonesianId = req.params.id
+
+    if ( IndonesianId.match(idre) !== null ) {
+        User.query()
+        .where("IndonesianId", IndonesianId)
+        .then(users => {
+            if ( users.length === 0 ) {
+                res.json({"message": "user does not exist"})
+            } else {
+                User.query()
+                    .update({
+                        deletedAt: knex.raw('CURRENT_TIMESTAMP')
+                    })
+                    .where('IndonesianId', IndonesianId)
+                    .then(() => {
+                        res.json({"message": "user deleted successfully"})
+                    })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    } else {
+        res.json(invalidId)
+    }
+});
 
 module.exports = {
     router: router
