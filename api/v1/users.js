@@ -25,6 +25,9 @@ const notFound = {"message": "no user found"};
 
 router.get('/users', (req, res) => {
   User.query()
+      .where({
+          deletedAt: '0000-00-00 00:00:00'
+      })
       .then(users => {
           if (users.length === 0 ) {
               res.json(notFound);
@@ -41,7 +44,10 @@ router.get('/users', (req, res) => {
 router.get('/users/:id', (req, res) => {
     let id = req.params.id;
     User.query()
-        .where('IndonesianId', id)
+        .where({
+            IndonesianId: id,
+            deletedAt: '0000-00-00 00:00:00'
+        })
         .then(users => {
             if (users.length === 0) {
                 res.json(notFound)
