@@ -14,6 +14,7 @@ router.get('/users/:id', (req, res) => {
         })
         .then(users => {
             if (users.length === 0) {
+                res.status(400);
                 res.json(notFound)
             } else {
                 res.json({

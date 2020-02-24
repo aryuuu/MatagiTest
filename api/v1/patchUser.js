@@ -5,7 +5,9 @@ const User = require('../../models/User');
 
 const { nameRE, idRE, invalidId, invalidName, notFound } = require('./const');
 
-
+/**
+ * @ PATCH /api/v1/users/:id
+ */
 router.patch('/users/:id', (req, res) => {
 
     let oldId = req.params.id;
@@ -39,6 +41,7 @@ router.patch('/users/:id', (req, res) => {
                             res.json({"message": "user updated successfully"})
                         })
                 } else {
+                    res.status(400);
                     res.json({"message": "user doesn't exist"})
                 }
             })

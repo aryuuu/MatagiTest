@@ -10,11 +10,12 @@ const { nameRE, idRE, invalidId, invalidName, notFound } = require('./const');
 router.delete('/users/:id', (req, res) => {
     let IndonesianId = req.params.id;
 
-    if ( IndonesianId.match(idre) !== null ) {
+    if ( IndonesianId.match(idRE) !== null ) {
         User.query()
         .where("IndonesianId", IndonesianId)
         .then(users => {
             if ( users.length === 0 ) {
+                res.status(400);
                 res.json({"message": "user does not exist"})
             } else {
                 User.query()
@@ -31,6 +32,7 @@ router.delete('/users/:id', (req, res) => {
             console.log(err)
         })
     } else {
+        res.status(400);
         res.json(invalidId)
     }
 });

@@ -24,7 +24,8 @@ app.use('/api/v1',
 
 // app.route('/documentation/v1', (req, res))
 
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Listening on port ${port}`);
+// });
 
+module.exports = app;

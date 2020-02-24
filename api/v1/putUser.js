@@ -6,15 +6,19 @@ const User = require('../../models/User');
 const { nameRE, idRE, invalidId, invalidName, notFound } = require('./const');
 
 
-router.put('/users', (req, res) => {
+router.put('/users/:id', (req, res) => {
+    let oldId = req.params.id;
     let { Name, IndonesianId, Birthday } = req.body;
     console.log(req.body);
 
     // periksa kelengkapan data
-    if ( Name === undefined ) {
+    if ( oldId === undefined ) {
+        res.status(400);
+        res.json({"message": "no id specified"});
+    } else if ( Name === undefined ) {
         res.status(400);
         res.json({"message": "no name specified"})
-    } else if ( IndonesianId === undefined ) {
+    } else if ( IndonesianId === undefined) {
         res.status(400);
         res.json({"message": "no id specified"})
     } else if ( Birthday === undefined ) {
@@ -25,7 +29,7 @@ router.put('/users', (req, res) => {
         if ( Name.match(nameRE) === null ) {
             res.status(400);
             res.json(invalidName)
-        } else if ( IndonesianId.match(idre) === null ) {
+        } else if ( IndonesianId.match(idRE) === null || oldId.match(idRE) === null ) {
             res.status(400);
             res.json(invalidId)
         } else {
