@@ -3,6 +3,7 @@ const knex = require('knex');
 const router = express.Router();
 const User = require('../../models/User');
 
+const { notFound } = require('./const');
 
 router.get('/users/:id', (req, res) => {
     let id = req.params.id;
