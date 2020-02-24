@@ -4,7 +4,8 @@
   "description": "rest api using express and mysql",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devstart": "nodemon index.js",
+    "test": "jest;echo ' if some test failed, please comment line 25 - 27 in index.js (app.listen part)'"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "jest": "^25.1.0",
     "jsdoc": "^3.6.3",
+    "nodemon": "^2.0.2",
     "supertest": "^4.0.2",
     "swagger-ui-express": "^4.1.3"
   }
