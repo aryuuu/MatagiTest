@@ -4,9 +4,16 @@ const router = express.Router();
 const User = require('../../models/User');
 
 const { notFound } = require('./const');
+
 /**
- * GET /api/v1/users
+ * @module getUser
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @return {undefined}
  */
+
+
 router.get('/users', (req, res) => {
   User.query()
       .where({

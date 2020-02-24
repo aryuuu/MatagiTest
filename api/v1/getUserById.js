@@ -5,6 +5,15 @@ const User = require('../../models/User');
 
 const { notFound } = require('./const');
 
+/**
+ * @module getUserById
+ * @function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @return {undefined}
+ */
+
+
 router.get('/users/:id', (req, res) => {
     let id = req.params.id;
     User.query()
