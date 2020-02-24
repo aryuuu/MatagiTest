@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "devstart": "nodemon index.js",
-    "test": "jest"
+    "test": "jest;echo ' if some test failed, please comment line 25 - 27 in index.js (app.listen part)'"
   },
   "repository": {
     "type": "git",
