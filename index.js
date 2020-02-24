@@ -4,9 +4,7 @@ const express = require("express");
 const port = process.env.PORT || 3000;
 
 const app = express();
-app.use(express.json(/*{
-    type: '*!/!*'
-}*/));
+app.use(express.json());
 app.use(express.urlencoded());
 
 /**
@@ -20,12 +18,13 @@ app.use('/api/v1',
     require('./api/v1/patchUser').router,
     require('./api/v1/deleteUser').router,
     );
-// app.use('/documentation', require('./documentation/v1/doc'));
+app.use('/documentation/v1',
+    require('./documentation/v1/doc').router);
 
 // app.route('/documentation/v1', (req, res))
 
-// app.listen(port, () => {
-//     console.log(`Listening on port ${port}`);
-// });
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+});
 
 module.exports = app;

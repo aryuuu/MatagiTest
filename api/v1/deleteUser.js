@@ -15,7 +15,7 @@ router.delete('/users/:id', (req, res) => {
         .where("IndonesianId", IndonesianId)
         .then(users => {
             if ( users.length === 0 ) {
-                res.status(400);
+                res.status(404);
                 res.json({"message": "user does not exist"})
             } else {
                 User.query()
@@ -32,7 +32,7 @@ router.delete('/users/:id', (req, res) => {
             console.log(err)
         })
     } else {
-        res.status(400);
+        res.status(404);
         res.json(invalidId)
     }
 });

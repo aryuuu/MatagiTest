@@ -1,0 +1,228 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Matagi Intern Test"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api/v1",
+  "definitions": {
+    "users": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "IndonesianId": {
+          "type": "string"
+        },
+        "Birthday": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/users" : {
+      "get": {
+        "summary": "get all users name, id, and birthday",
+        "operationId": "getUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/users"
+            }
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "add new user, if not exist",
+        "operationId": "addUser",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "formData",
+            "description": "Name of new user",
+            "required": "true",
+            "type": "string"
+          },
+          {
+            "name": "IndonesianId",
+            "in": "formData",
+            "description": "id of new user",
+            "required": "true",
+            "type": "string"
+          },
+          {
+            "name": "Birthday",
+            "in": "formData",
+            "description": "birthday of new user",
+            "required": "true",
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "get user with specified id",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of searched user",
+            "required": "true",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "summary": "update or create new user",
+        "operationId": "putUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "updated user id",
+            "required": "true",
+            "type": "string"
+          },
+          {
+            "name": "Name",
+            "in": "formData",
+            "description": "Name of new user",
+            "required": "true",
+            "type": "string"
+          },
+          {
+            "name": "IndonesianId",
+            "in": "formData",
+            "description": "id of new user",
+            "required": "true",
+            "type": "string"
+          },
+          {
+            "name": "Birthday",
+            "in": "formData",
+            "description": "birthday of new user",
+            "required": "true",
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "bad request"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      },
+      "patch": {
+        "summary": "update user data",
+        "operationId": "patchUser",
+        "requestformData": {
+
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of patched user",
+            "required": "true",
+            "type": "string"
+          },
+          {
+            "name": "Name",
+            "in": "formData",
+            "description": "Name of new user",
+            "required": "false",
+            "type": "string"
+          },
+          {
+            "name": "IndonesianId",
+            "in": "formData",
+            "description": "id of new user",
+            "required": "false",
+            "type": "string"
+          },
+          {
+            "name": "Birthday",
+            "in": "formData",
+            "description": "birthday of new user",
+            "required": "false",
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete user data",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of deleted user",
+            "required": "true",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "nout found"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+
+
+    }
+
+
+  }
+}

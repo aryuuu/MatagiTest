@@ -14,8 +14,10 @@ router.get('/users', (req, res) => {
       })
       .then(users => {
           if (users.length === 0 ) {
+              res.json(404)
               res.json(notFound);
           } else {
+              console.log
             res.json({
                 message: "success",
                 users: users
