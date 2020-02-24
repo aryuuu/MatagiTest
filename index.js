@@ -8,10 +8,20 @@ const app = express();
 app.use(express.json(/*{
     type: '*!/!*'
 }*/));
-app.use(express.urlencoded())
+app.use(express.urlencoded());
 
-// endpoints
-app.use('/api/v1', require('./api/v1/users').router);
+/**
+ * endpoints
+ */
+app.use('/api/v1',
+    require('./api/v1/getUser').router,
+    require('./api/v1/getUserById').router,
+    require('./api/v1/addUser').router,
+    require('./api/v1/putUser').router,
+    require('./api/v1/patchUser').router,
+    require('./api/v1/deleteUser').router,
+    );
+// app.use('/documentation', require('./documentation/v1/doc'));
 
 // app.route('/documentation/v1', (req, res))
 
